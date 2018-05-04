@@ -27,7 +27,7 @@ trait SimpleSingleton {
 
     /**
      * 获取实例的方法
-     * @return null|SimpleSingleton
+     * @return static
      */
     public static function getInstance() {
         static $_obj = null;
@@ -36,4 +36,6 @@ trait SimpleSingleton {
         }
         return $_obj;
     }
+
+    public function init(...$param){}
 }

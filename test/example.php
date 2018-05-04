@@ -11,8 +11,13 @@ include_once "./lib/autoload.php";
 class A {
     use \phpcmx\common\trait_base\SimpleSingleton;
 
-    public static function show() {
-        echo 'yes';
+    private $a;
+    public function show() {
+        echo $this->a;
+    }
+
+    public function init() {
+        $this->a = 'yes';
     }
 }
 
