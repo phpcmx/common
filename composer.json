@@ -1,0 +1,14 @@
+{
+    "name": "phpcmx/common",
+    "description": "一些快捷常用类库",
+    "license": "MIT",
+    "keywords": ["common", "lib", "phpcmx common", "phpcmx"],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "phpcmx\\common\\": "src/"
+        }
+    }
+}
