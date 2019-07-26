@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: caomengxin
+ * User: Bool Number
  * Date: 2018/5/4
  * Time: 下午5:46
  */
@@ -11,7 +11,14 @@ namespace phpcmx\common\quality_tool;
 use phpcmx\common\trait_base\SimpleSingleton;
 
 /**
- * 打点即时，方便记录日志和对时间的控制
+ * 打点日志
+ *
+ * 在需要打点的地方
+ * TickTime::getInstance()->dot('flag1');
+ * 在程序最后，执行
+ * TickTime::getInstance()->register();
+ * [flag1:0,flag2:3,flag3:10]
+ *
  * Class TickTime
  *
  * @package phpcmx\common\quality_tool
@@ -19,49 +26,42 @@ use phpcmx\common\trait_base\SimpleSingleton;
 class TickTime {
     use SimpleSingleton;
 
-    /**
-     * @var float[]
-     */
-    private $_tick = [];
+    private $logTime = [];
 
     /**
-     * 添加记录点（tick必须为数字，并且不能重复设置，会覆盖）
-     * @param int $tick
+     * @param $flag
      * @return void
      */
-    public function tick(int $tick) {
-        $this->_tick[$tick] = microtime(true);
+    public function dot($flag)
+    {
+        // 当前时间 ms
+        $time = intval(microtime(1)*1000);
+        // 基准时间
+        if (isset($this->logTime[0], $this->logTime[0]['time'])){
+            $baseTime = $this->logTime[0]['time'];
+        }else{
+            $baseTime = $time;
+        }
+        // 相对于基准时间的相对时间
+        $phaseTime = $time - $baseTime;
+
+        $this->logTime[] = [
+            'flag' => $flag,
+            'time' => $time,
+            'phase' => $phaseTime,
+        ];
     }
 
     /**
-     * 获取两个tick之间的时间
-     * @param int $startTick
-     * @param int $endTick
-     * @return float
+     * 记录到日志中
      */
-    public function time(int $startTick, int $endTick) {
-        $sta = $this->_tick[$startTick] ?: 0;
-        $end = $this->_tick[$endTick] ?: 0;
+    public function register()
+    {
+        $timedMap = array_map(function($v){
+            return "{$v['flag']}:{$v['phase']}";
+        }, $this->logTime);
+        $timed = implode(',', $timedMap);
 
-        return $end - $sta;
-    }
-
-    /**
-     * 获取所有的tick
-     * @return float[]
-     */
-    public function getRecord() {
-        return $this->_tick;
-    }
-
-    /**
-     * 获取所有的耗时
-     * @return float
-     */
-    public function getAllTime() {
-        reset($this->_tick);
-        $first = current($this->_tick);
-        $last = end($this->_tick);
-        return $last - $first;
+        return $timed;
     }
 }

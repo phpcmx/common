@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: caomengxin
+ * User: Bool Number
  * Date: 2018/5/4
  * Time: 下午3:49
  */
@@ -25,12 +25,12 @@ class A {
 
 A::getInstance()->show();
 
+echo PHP_EOL;
 
-TickTime::getInstance()->tick(1);
-sleep(1);
-TickTime::getInstance()->tick(2);
-sleep(2);
-TickTime::getInstance()->tick(3);
+TickTime::getInstance()->dot('start');
+//sleep(1);
+TickTime::getInstance()->dot('sleep1');
+//sleep(2);
+TickTime::getInstance()->dot('sleep2');
 
-var_dump(TickTime::getInstance()->time(2, 3));
-var_dump(TickTime::getInstance()->getAllTime());
+var_dump(TickTime::getInstance()->register());

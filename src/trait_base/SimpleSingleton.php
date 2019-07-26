@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: caomengxin
+ * User: Bool Number
  * Date: 2018/5/4
  * Time: 下午3:40
  */
@@ -17,11 +17,10 @@ trait SimpleSingleton {
     /**
      * 给构造函数添加init接口
      * SimpleSingleton constructor.
-     * @param array ...$param
      */
-    private function __construct(...$param) {
+    private function __construct() {
         if (method_exists($this, 'init')){
-            $this->init($param);
+            $this->init();
         }
     }
 
@@ -30,12 +29,17 @@ trait SimpleSingleton {
      * @return static
      */
     public static function getInstance() {
-        static $_obj = null;
-        if (is_null($_obj)){
-            $_obj = new self();
+        static $instance = [];
+        if (!key_exists(static::class, $instance)){
+            $instance[static::class] = new static();
         }
-        return $_obj;
+        return $instance[static::class];
     }
 
-    public function init(...$param){}
+    /**
+     * @return mixed
+     */
+    public function init(){
+        return null;
+    }
 }
