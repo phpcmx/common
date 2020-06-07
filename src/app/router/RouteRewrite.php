@@ -10,6 +10,7 @@ namespace phpcmx\common\app\router;
 
 use phpcmx\common\app\exception\RouteAssembleQuery;
 use phpcmx\common\app\request\Request;
+use phpcmx\common\lib\HttpTool;
 
 /**
  * Class RouteRewrite
@@ -60,7 +61,7 @@ class RouteRewrite extends RouteBase
      * @return bool
      */
     function route(Request $request): bool {
-        $path = $_SERVER['PATH_INFO'] ?: '/';
+        $path = HttpTool::getPathInfo() ?: '/';
         $path = trim($path, '/');
         $path_info = explode('/', $path);
         $rule_info = explode('/', $this->rewrite_rule);
@@ -69,10 +70,7 @@ class RouteRewrite extends RouteBase
         do {
             $rule = array_shift($rule_info);
             $part = array_shift($path_info);
-            if (empty($part)) {
-                // url 短与 rule
-                return false;
-            } else if ($rule == '*') {
+            if ($rule == '*') {
                 // 末尾匹配所有参数
                 $key = $part;
                 while($key) {
@@ -80,6 +78,9 @@ class RouteRewrite extends RouteBase
                     $params[$key] = $value;
                     $key = array_shift($path_info);
                 }
+            }else if (empty($part)) {
+                // url 短与 rule
+                return false;
             } else if(substr($rule, 0, 1) == ':') {
                 // :var
                 $params[substr($rule, 1)] = $part;

@@ -5,6 +5,7 @@ namespace phpcmx\common\app\router;
 
 
 use phpcmx\common\app\request\Request;
+use phpcmx\common\lib\HttpTool;
 
 /**
  * 静态路由，默认路由，
@@ -37,7 +38,7 @@ class RouteStatic extends RouteBase
      * @return bool
      */
     function route(Request $request): bool {
-        $path = $_SERVER['PATH_INFO'] ?? '/';
+        $path = HttpTool::getPathInfo() ?: '/';
         $path = trim($path, '/');
         $path_info = explode('/', $path);
 

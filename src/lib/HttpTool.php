@@ -35,4 +35,16 @@ class HttpTool
         return ArrayTool::getItem($_SERVER, 'HTTP_X_REQUESTED_WITH')
             === 'xmlhttprequest';
     }
+
+    /**
+     * get path_info
+     */
+    public static function getPathInfo() {
+        $path = $_SERVER['PATH_INFO'] ?? null;
+        if (1 || is_null($path)) {
+            $info = parse_url($_SERVER['REQUEST_URI']);
+            $path = $info['path'];
+        }
+        return $path;
+    }
 }
