@@ -4,9 +4,13 @@
 namespace app\action;
 
 
+use app\service\model\dao\TestModel;
 use phpcmx\common\app\action\ActionAbstract;
 use phpcmx\common\app\dispatch\Dispatcher;
 use phpcmx\common\app\response\ResponseAbstract;
+use phpcmx\common\orm\simple\logger\Logger;
+use phpcmx\common\orm\simple\sql\Select;
+use phpcmx\common\orm\simple\sql\Where;
 
 class Demo extends ActionAbstract
 {
@@ -18,6 +22,8 @@ class Demo extends ActionAbstract
      */
     function execute() {
         $request = Dispatcher::getInstance()->getRequest();
-        echo "<pre>";var_dump($request->getParams());die;
+        $id = $request->getParam('id');
+
+        return $id;
     }
 }

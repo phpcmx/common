@@ -8,6 +8,7 @@ use phpcmx\common\app\App;
 use phpcmx\common\app\controller\ControllerAbstract;
 use phpcmx\common\app\exception\ControllerNotFound;
 use phpcmx\common\app\request\Request;
+use phpcmx\common\app\response\ResponseAbstract;
 use phpcmx\common\app\router\Router;
 use phpcmx\common\trait_base\SimpleSingleton;
 
@@ -85,7 +86,9 @@ class Dispatcher
 
         // 响应
         foreach ($response as $index => $item) {
-            $item->response();
+            if ($item) {
+                $item->response();
+            }
         }
     }
 

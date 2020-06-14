@@ -8,6 +8,7 @@
 namespace phpcmx\common\app\action;
 
 
+use phpcmx\common\app\exception\HttpException;
 use phpcmx\common\app\exception\restful\MethodNotAllow;
 use phpcmx\common\app\response\ResponseAbstract;
 use phpcmx\common\lib\HttpTool;
@@ -38,12 +39,45 @@ abstract class RestfulActionAbstract extends ActionAbstract
              throw new MethodNotAllow(HttpTool::getMethod());
          }
 
-         $response = $this->$method();
-         if (!($response instanceof ResponseAbstract)) {
-             $response = ResponseAbstract::getResponse()->setBody(json_encode($response));
+         try {
+             $response = $this->$method();
+             if (!($response instanceof ResponseAbstract)) {
+                 $response = $this->getResponse()->setBody(json_encode($response));
+             }
+         } catch (MethodNotAllow $e) {
+             $response = $this->httpResponseCode(
+                 405,
+                 'Method Not Allowed'
+             );
+         } catch (HttpException $e) {
+             $response = $this->httpResponseCode(
+                 $e->getCode(),
+                 $e->getMessage()
+             );
+         } catch (\Exception $e) {
+             $response = $this->httpResponseCode(
+                 500,
+                 'Internal Server Error'
+             );
          }
-         $response->setHeader('Content-type: application/json');
-         return $response;
+
+        $response->setHeader('Content-type: application/json');
+        return $response;
+    }
+
+    /**
+     * @param $code
+     * @param $message
+     *
+     * @return ResponseAbstract
+     */
+    protected function httpResponseCode($code, $message) {
+        http_response_code($code);
+        $response = $this->getResponse()->setBody(json_encode([
+            'status' => $code,
+            'message' => $message,
+        ]));
+        return $response;
     }
 
     /**

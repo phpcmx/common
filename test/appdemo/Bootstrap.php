@@ -6,6 +6,7 @@ namespace app;
 
 use phpcmx\common\app\dispatch\Dispatcher;
 use phpcmx\common\app\router\RouteRewrite;
+use app\lib\Conf;
 
 class Bootstrap extends \phpcmx\common\app\Bootstrap
 {
@@ -20,6 +21,7 @@ class Bootstrap extends \phpcmx\common\app\Bootstrap
     function init(Dispatcher $dispatch) {
         $this->init_const();
         $this->init_router($dispatch);
+        $this->init_conf();
     }
 
     /**
@@ -54,10 +56,17 @@ class Bootstrap extends \phpcmx\common\app\Bootstrap
         );
         // rewrite
         $router->addRoute('test',
-            new RouteRewrite( 'test/:test/*', [
+            new RouteRewrite( 'demo/:id/*', [
                 'controller' => 'Demo',
                 'action' => 'demo',
             ])
         );
+    }
+
+    /**
+     * init conf
+     */
+    public function init_conf() {
+        Conf::getInstance()->initConf(APP_PATH.'/conf');
     }
 }

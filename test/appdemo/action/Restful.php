@@ -30,7 +30,7 @@ class Restful extends ActionAbstract
 
         $className = $this->_resource[$resource];
         /** @var RestfulActionAbstract $action */
-        $action = new $className($this->controller);
+        $action = new $className($this->_controller);
         if (!($action instanceof RestfulActionAbstract)) {
             throw new \LogicException('资源类必须继承 ' . RestfulActionAbstract::class . '。' . $className);
         }

@@ -114,7 +114,7 @@ abstract class ControllerAbstract
         }
 
         $this->_forward = [
-            'affect' => true,
+            'effect' => true,
             'forward' => [$controller, $action],
             'params' => $params,
         ];

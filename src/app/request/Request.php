@@ -150,8 +150,14 @@ class Request
      *
      * @return bool|mixed
      */
-    public function getPost(string $name, $default = null) {
-        return ArrayTool::getItem($_POST, $name, $default);
+    public function getPost(string $name = null, $default = null) {
+        if ($name) {
+            return ArrayTool::getItem($_POST, $name, $default);
+        } else {
+            $post = $_POST ?: $this->getRaw();
+            $post = json_decode($post, 1) ?: $post;
+            return $post;
+        }
     }
 
     /**
@@ -161,8 +167,12 @@ class Request
      *
      * @return bool|mixed
      */
-    public function Query(string $name, $default = null) {
-        return ArrayTool::getItem($_GET, $name, $default);
+    public function getQuery(string $name = null, $default = null) {
+        if ($name) {
+            return ArrayTool::getItem($_GET, $name, $default);
+        } else {
+            return $_GET;
+        }
     }
 
     /**

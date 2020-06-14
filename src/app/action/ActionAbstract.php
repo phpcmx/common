@@ -13,7 +13,9 @@ use phpcmx\common\app\response\ResponseAbstract;
 abstract class ActionAbstract
 {
     /** @var ControllerAbstract  */
-    protected $controller;
+    protected $_controller;
+    /** @var ResponseAbstract */
+    private $_response;
 
     /**
      * ActionAbstract constructor.
@@ -21,7 +23,17 @@ abstract class ActionAbstract
      * @param ControllerAbstract $controller
      */
     public function __construct(ControllerAbstract $controller) {
-        $this->controller = $controller;
+        $this->_controller = $controller;
+        $this->_response = ResponseAbstract::getResponse();
+        $this->init();
+    }
+
+    /**
+     * 自定义初始化
+     * @return mixed
+     */
+    protected function init() {
+        return null;
     }
 
     /**
@@ -39,17 +51,17 @@ abstract class ActionAbstract
         $res = $this->execute();
 
         if (empty($res)) {
-            return ResponseAbstract::getResponse();
+            return $this->_response;
         }
         // bool 就直接返回 TODO 只有有模板，false不渲染模板
         if (is_bool($res)) {
-            return ResponseAbstract::getResponse();
+            return $this->_response;
         }
         if (is_string($res)) {
             $res = [$res];
         }
         if (is_array($res)) {
-            $response = ResponseAbstract::getResponse();
+            $response = $this->_response;
             foreach ($res as $key => $item) {
                 if (is_int($key)) {
                     $response->setBody($item);
@@ -76,14 +88,14 @@ abstract class ActionAbstract
      * @param $params
      */
     protected function forward($forward, $params = []) {
-        $this->controller->forward($forward, $params);
+        $this->_controller->forward($forward, $params);
     }
 
     /**
      * @param string $url
      */
     protected function redirect(string $url) {
-        $this->controller->redirect($url);
+        $this->_controller->redirect($url);
     }
 
     /**
@@ -91,5 +103,24 @@ abstract class ActionAbstract
      */
     protected function getRequest() {
         return Dispatcher::getInstance()->getRequest();
+    }
+
+    /**
+     * @return ResponseAbstract|\phpcmx\common\app\response\ResponseCli|\phpcmx\common\app\response\ResponseHttp
+     */
+    protected function getResponse() {
+        return $this->_response;
+    }
+
+    /**
+     * @param $array
+     *
+     * @return ResponseAbstract|\phpcmx\common\app\response\ResponseCli|\phpcmx\common\app\response\ResponseHttp
+     */
+    protected function returnJson($array) {
+        $response = $this->getResponse();
+        $response->setBody(json_encode($array, 1));
+        $response->setHeader('Content-type: application/json');
+        return $response;
     }
 }
